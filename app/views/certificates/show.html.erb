@@ -16,23 +16,35 @@
 
 <main class="certificate-page">
   <% if current_user %>
-    <header class="certificate-page__earn">
-      <div class="certificate-page__earn-copy">
-        <p class="certificate-page__eyebrow">Stardance certificate</p>
-        <h1 class="certificate-page__title">
-          Earn a <span class="certificate-page__title-em">Stardance</span> certificate
-        </h1>
-        <p class="certificate-page__subtitle">
-          Get a certificate recognized by NASA, AMD, and GitHub for having
-          <%= Certificate::REQUIRED_APPROVED_HOURS %> hours approved on Stardance.
-        </p>
+    <%# Hero %>
+    <header class="certificate-page__hero certificate-page__hero--public">
+      <h1 class="certificate-page__display-title" style="text-wrap: balance">
+        Stardance Certificate of Achievement
+      </h1>
+      <p class="certificate-page__hero-desc">
+        Issued by Hack Club to teens with <%= Certificate::REQUIRED_APPROVED_HOURS %> hours
+        of verified project work. Recognized by MIT School of Engineering,
+        GitHub, AMD, and Congressional App Challenge.
+      </p>
+      <div class="certificate-page__showcase certificate-page__showcase--large"
+           data-controller="tilt-3d" data-tilt-3d-max-value="12">
+        <div class="certificate-page__showcase-sheen" aria-hidden="true"></div>
+        <%= image_tag "certificate/preview.jpg",
+              alt: "Preview of a Stardance certificate",
+              class: "certificate-page__showcase-img",
+              draggable: false %>
       </div>
-      <%= image_tag "certificate/preview.jpg",
-            alt: "Preview of a Stardance certificate",
-            class: "certificate-page__preview",
-            draggable: false %>
+      <div class="certificate-page__partners">
+        <p class="certificate-page__partners-label">In partnership with</p>
+        <div class="certificate-page__partners-logos">
+          <%= image_tag "landing/partners/nasa.png", alt: "NASA", class: "certificate-page__partner-logo" %>
+          <%= image_tag "landing/partners/amd.png", alt: "AMD", class: "certificate-page__partner-logo" %>
+          <%= image_tag "landing/partners/github.png", alt: "GitHub", class: "certificate-page__partner-logo" %>
+        </div>
+      </div>
     </header>
 
+    <%# Your certificate / progress %>
     <section class="certificate-page__mine">
       <% if (certificate = current_user.certificate) %>
         <h2 class="certificate-page__section-title">Your certificate</h2>
@@ -119,6 +131,20 @@
       <% end %>
     </section>
 
+    <%# About %>
+    <section class="certificate-page__about">
+      <h2 class="certificate-page__section-title">About this certificate</h2>
+      <div class="certificate-page__about-body">
+        <p>
+          Every hour is logged through daily devlogs, reviewed and approved by
+          Hack Club staff, and tied to a shipped project that anyone can try.
+          Each certificate has a unique 6-character verification code linking
+          back to the recipient's work.
+        </p>
+      </div>
+    </section>
+
+    <%# FAQ %>
     <section class="certificate-page__faq">
       <h2 class="certificate-page__section-title">FAQ</h2>
       <%= render "certificates/faq", items: [
@@ -132,31 +158,80 @@
                It's only buyable once you have qualified for the certificate." ]
           ] %>
     </section>
-  <% end %>
 
-  <% if current_user %>
+    <%# Verify %>
     <section class="certificate-page__verify">
-      <h2 class="certificate-page__section-title">Want to verify a certificate?</h2>
+      <h2 class="certificate-page__section-title">Verify a certificate</h2>
       <p class="certificate-page__subtitle">Enter the 6-character code printed on the certificate.</p>
       <%= render "certificates/verifier" %>
     </section>
   <% else %>
+    <%# === LOGGED-OUT VIEW === %>
+    <%# Hero: title + certificate with 3D tilt + sheen %>
+    <header class="certificate-page__hero certificate-page__hero--public">
+      <h1 class="certificate-page__display-title" style="text-wrap: balance">
+        Stardance Certificate of Achievement
+      </h1>
+      <p class="certificate-page__hero-desc">
+        Issued by <a href="https://hackclub.com" class="certificate-page__link">Hack Club</a>,
+        a 501(c)(3) nonprofit, to teens who complete at least
+        <%= Certificate::REQUIRED_APPROVED_HOURS %> hours of verified project work
+        during the Stardance Challenge.
+      </p>
+
+      <div class="certificate-page__showcase certificate-page__showcase--large"
+           data-controller="tilt-3d" data-tilt-3d-max-value="14">
+        <div class="certificate-page__showcase-sheen" aria-hidden="true"></div>
+        <%= image_tag "certificate/preview.jpg",
+              alt: "A Stardance Certificate of Achievement showing partner logos from AMD, Hack Club, NASA, and GitHub",
+              class: "certificate-page__showcase-img",
+              draggable: false %>
+      </div>
+
+      <div class="certificate-page__partners">
+        <p class="certificate-page__partners-label">In partnership with</p>
+        <div class="certificate-page__partners-logos">
+          <%= image_tag "landing/partners/nasa.png", alt: "NASA", class: "certificate-page__partner-logo" %>
+          <%= image_tag "landing/partners/amd.png", alt: "AMD", class: "certificate-page__partner-logo" %>
+          <%= image_tag "landing/partners/github.png", alt: "GitHub", class: "certificate-page__partner-logo" %>
+        </div>
+      </div>
+    </header>
+
+    <%# About %>
+    <section class="certificate-page__about">
+      <h2 class="certificate-page__section-title">About this certificate</h2>
+      <div class="certificate-page__about-body">
+        <p>
+          This certificate is issued by
+          <a href="https://hackclub.com" class="certificate-page__link">Hack Club</a>,
+          a 501(c)(3) nonprofit (EIN 81-2908499), to teens who complete at least
+          <%= Certificate::REQUIRED_APPROVED_HOURS %> hours of verified project work
+          during the Stardance Challenge.
+        </p>
+        <p>
+          Every hour is logged through daily devlogs, reviewed and approved by
+          Hack Club staff, and tied to a shipped project that anyone can try.
+          Each certificate has a unique 6-character verification code linking
+          back to the recipient's work.
+        </p>
+      </div>
+    </section>
+
+    <%# Verify %>
     <section class="certificate-page__verify">
-      <header class="certificate-page__hero">
-        <p class="certificate-page__eyebrow">Certificate verification</p>
-        <h1 class="certificate-page__title">
-          Verify a <span class="certificate-page__title-em">Stardance</span> certificate
-        </h1>
-        <p class="certificate-page__subtitle">Enter the 6-character code printed on the certificate.</p>
-      </header>
+      <h2 class="certificate-page__section-title">Verify a certificate</h2>
+      <p class="certificate-page__subtitle">
+        Enter the 6-character code printed on the certificate.
+      </p>
       <%= render "certificates/verifier" %>
     </section>
 
+    <%# FAQ %>
     <% hack_club_answer = capture do %>
-      Hack Club is a 501(c)(3) nonprofit dedicated to helping teens worldwide build real
-      technical projects by hosting online and in-person hackathons and events. With a
-      community of over 150,000 teen hackers, any teen ages 13&ndash;18 is welcome to join
-      the community at <%= link_to "hackclub.com", "https://hackclub.com", class: "certificate-page__faq-link" %>.
+      Hack Club is a 501(c)(3) nonprofit that helps teens worldwide build real technical
+      projects through online and in-person hackathons. Over 150,000 teens are part of
+      the community. Learn more at <%= link_to "hackclub.com", "https://hackclub.com", class: "certificate-page__link" %>.
     <% end %>
     <section class="certificate-page__faq">
       <h2 class="certificate-page__section-title">FAQ</h2>
@@ -169,16 +244,21 @@
             [ "What does this certificate mean?",
               "This certificate verifies that the recipient spent at least
                #{Certificate::REQUIRED_APPROVED_HOURS} hours working on personal projects that
-               have been shipped so anyone can experience it." ],
+               have been shipped so anyone can experience it. Each certificate has a unique code
+               that links to the recipient's work." ],
             [ "How can I earn a certificate?",
-              "See below! Anyone ages 13–18 can get a certificate (plus free prizes) by just
-               logging the time you spend on personal technical projects. We even have guides if you
-               have no experience!" ]
+              "Anyone ages 13–18 can earn a certificate by joining Stardance Challenge, logging
+               time on personal technical projects, and shipping them for the community to see.
+               No prior experience required. Guides are provided." ]
           ] %>
     </section>
 
+    <%# CTA %>
     <section class="certificate-page__join">
-      <h2 class="certificate-page__section-title">Teen 13-18?</h2>
+      <h2 class="certificate-page__section-title">Teen 13–18?</h2>
+      <p class="certificate-page__subtitle">
+        Join Stardance Challenge to start building projects and earn your own certificate.
+      </p>
       <%= render ActionButtonComponent.new(text: "Join Stardance Challenge", size: :large,
             variant: :primary, href: root_path) %>
     </section>

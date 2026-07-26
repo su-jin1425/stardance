@@ -11,6 +11,7 @@
 
 <div class="app-layout">
   <main class="app-layout__main devlog-detail" aria-label="Devlog">
+    <%= render "shared/inspector", record: @devlog %>
     <nav class="devlog-detail__back" aria-label="Back">
       <%= link_to project_path(@project), class: "devlog-detail__back-link" do %>
         <%= inline_svg_tag "icons/chevron-down.svg", class: "devlog-detail__back-arrow", aria: { hidden: true } %>

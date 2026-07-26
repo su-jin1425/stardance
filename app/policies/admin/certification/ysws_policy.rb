@@ -18,4 +18,8 @@ class Admin::Certification::YswsPolicy < ApplicationPolicy
   def report_fraud?
     index?
   end
+
+  def unclaim?
+    user.present? && index? && record.pending? && record.claimed_by?(user)
+  end
 end

@@ -674,7 +674,8 @@
     ("cursor-strange", var(--color-brand-lilac), rgba(235, 183, 255, 0.18)),
     ("neuralnet", var(--color-brand-blue), rgba(149, 219, 255, 0.18)),
     ("no-hackatime-user", var(--color-brand-peach), rgba(255, 213, 152, 0.18)),
-    ("check-failed", var(--color-brand-yellow), rgba(255, 229, 100, 0.18))
+    ("check-failed", var(--color-brand-yellow), rgba(255, 229, 100, 0.18)),
+    ("entropy-anomaly", var(--color-brand-mint), rgba(129, 255, 255, 0.18))
   {
     &__tag--#{$flag} {
       background: $tint;

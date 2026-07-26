@@ -208,6 +208,31 @@ turbo-frame#project_hero {
   }
 }
 
+.project-show__admin-link {
+  font-size: 0.85em;
+  text-decoration: none;
+  opacity: 0.85;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// Admin-editing-someone-else's-project notice. Sits inside an admin_tool
+// dashed box, so it only needs its own text color, not the full pill/border
+// treatment. Unlike the profile page's equivalent, this doesn't need a
+// .profile--editing-style CSS reveal — the whole edit form is only rendered
+// server-side when actually in edit mode, so there's no "empty box" case.
+.project-show__admin-edit-notice {
+  margin: 0 0 var(--space-xs);
+  font-size: 0.85rem;
+  color: var(--color-brand-orange);
+
+  strong {
+    font-weight: 700;
+  }
+}
+
 .project-show__title-input {
   padding: 0;
   border: 0;

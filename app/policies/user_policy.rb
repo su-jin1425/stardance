@@ -4,7 +4,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def update?
-    user.present? && user.id == record.id
+    user.present? && (user.id == record.id || user.admin?)
   end
 
   def follow?

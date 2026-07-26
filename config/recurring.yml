@@ -99,12 +99,6 @@ production:
     concurrency: 1
     description: "Re-poll recent non-terminal Lookout sessions so recordings finalize even if the recorder tab was closed"
 
-  sync_pyramid_enriched_refs:
-    class: SyncPyramidEnrichedRefsJob
-    schedule: every hour
-    concurrency: 1
-    description: "Get valid referral codes from Pyramid Scheme and update records"
-
   activity_daily_summary:
     class: ActivityDailySummaryJob
     schedule: every day at 10am America/New_York
@@ -176,6 +170,12 @@ production:
     schedule: every day at 3am UTC
     concurrency: 1
     description: "Sync streak activities from Hackatime for all active users"
+
+  sync_project_languages:
+    class: SyncProjectLanguagesJob
+    schedule: every 5 minutes
+    concurrency: 1
+    description: "Sync GitHub language stats for projects, 10 at a time"
 
   ahoy_backfill_project_created_ahoy_events:
     class: AhoyBackfillProjectCreatedJob

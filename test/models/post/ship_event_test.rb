@@ -147,6 +147,17 @@ class Post::ShipEventTest < ActiveSupport::TestCase
     assert_equal 3, notified[:params]["votes_needed"]
   end
 
+  test "issue_payout! notifies vote deficit only once per ship event" do
+    ship = create_ship_event(hours: 2, vote_count: Post::ShipEvent::VOTES_REQUIRED_FOR_PAYOUT)
+    @owner.update!(vote_balance: -3)
+    ship.reload.refresh_payout_score!
+
+    assert_difference -> { Notifications::Payouts::VoteDeficitBlocked.count }, 1 do
+      ship.issue_payout!
+      ship.issue_payout!
+    end
+  end
+
   test "issue_payout! is idempotent" do
     ship = create_ship_event(hours: 2, vote_count: Post::ShipEvent::VOTES_REQUIRED_FOR_PAYOUT)
 

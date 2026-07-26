@@ -339,6 +339,10 @@
       </div>
     </div>
 
+    <% if @certification_integrities.any? %>
+      <%= render "certification_integrities", integrities: @certification_integrities %>
+    <% end %>
+
     <div class="mission-panel">
       <h2 class="admin-user-show__section-title">Internal Notes</h2>
       <p class="admin-user-show__muted">Shared between fraud, fulfillment, and admins. Changes are audit logged.</p>

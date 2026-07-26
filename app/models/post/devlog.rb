@@ -131,6 +131,41 @@ class Post::Devlog < ApplicationRecord
     result
   end
 
+  # Best-effort per-Hackatime-project time split for this devlog's logged
+  # window — admin-only debug info (see Posts::CardComponent). There's no
+  # persisted per-project breakdown (duration_seconds is one aggregate total),
+  # so this reconstructs it live: one Hackatime API call per project key that
+  # was linked at devlog-creation time, scoped to the same window duration_seconds
+  # was originally computed from. Cached indefinitely once computed, since a
+  # past devlog's time window never changes.
+  def hackatime_project_breakdown
+    keys = hackatime_projects_key_snapshot.to_s.split(",").map(&:strip).reject(&:blank?)
+    return [] if keys.empty? || hackatime_projects_key_snapshot == "test"
+
+    author = post&.user
+    hackatime_uid = author&.hackatime_identity&.uid
+    return [] if hackatime_uid.blank?
+
+    project = post.project
+    return [] unless project
+
+    Rails.cache.fetch([ "devlog_hackatime_breakdown", id ], expires_in: 30.days) do
+      access_token = author.hackatime_identity&.access_token
+      window_start = project.devlog_window_start(created_at)
+
+      breakdown = keys.map do |key|
+        seconds = HackatimeService.fetch_total_seconds_for_projects(
+          hackatime_uid, [ key ], start_date: window_start.iso8601, end_date: created_at.iso8601, access_token: access_token
+        ).to_i
+        { name: key, seconds: seconds }
+      end
+
+      total = breakdown.sum { |b| b[:seconds] }
+      breakdown.each { |b| b[:percent] = total.positive? ? (b[:seconds] * 100.0 / total).round(1) : 0.0 }
+      breakdown.sort_by { |b| -b[:seconds] }
+    end
+  end
+
   private
 
   def handle_post_creation

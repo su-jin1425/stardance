@@ -20,6 +20,7 @@
   viewer_follow = @viewer_follow
   total_hours = @total_hours || (@project.duration_seconds / 3600.0).round
   can_edit_project = @can_edit_project
+  admin_editing_project = @admin_editing_project
   # Only highlight the unfinished sections when the user arrived via the
   # "Complete project info" button (which adds ?complete=1).
   highlight_incomplete_fields = (can_edit_project && params[:complete].present?) ? @project.incomplete_info_fields : []
@@ -28,6 +29,7 @@
 
 <div class="app-layout" data-controller="profile-modal">
   <div class="app-layout__main">
+    <%= render "shared/inspector", record: @project %>
     <%= turbo_frame_tag "project_hero" do %>
     <% if can_delete_project %>
       <%= form_with(url: project_path(@project), method: :delete, id: "delete-project-form", style: "display: none;") do %>
@@ -91,6 +93,12 @@
                                       "project-form-target": "title"
                                     } %>
 
+                <% if admin_editing_project %>
+                  <%= admin_tool do %>
+                    <p class="project-show__admin-edit-notice">You're editing <strong><%= @project.title %></strong> — this isn't your project just remember that.</p>
+                  <% end %>
+                <% end %>
+
                 <div class="project-show__byline">
                   <% if members.any? %>
                     <ul class="project-show__avatars" aria-hidden="true">
@@ -110,7 +118,8 @@
                   <p class="project-show__authors">
                     By
                     <% members.each_with_index do |m, i| %>
-                      <%= " and " if i > 0 && i == members.length - 1 %><%= link_to "@#{m.display_name}", profile_path(m.display_name), class: "project-show__author", data: { turbo_frame: "_top", turbo_prefetch: "true" } %><%= render StreakBadgeComponent.new(user: m) %><%= " ⚡" if m.admin? %><%= "," if i < members.length - 2 && members.length > 2 %>
+                      <%= " and " if i > 0 && i == members.length - 1 %><%= render "shared/username_link", user: m, link_class: "project-show__author",
+                          data: { turbo_frame: "_top", turbo_prefetch: "true" } %><%= "," if i < members.length - 2 && members.length > 2 %>
                     <% end %>
                   </p>
                 </div>
@@ -399,6 +408,9 @@
                   <% if @project.hardware? %>
                     <span class="project-show__tag project-show__tag--hardware">Hardware</span>
                   <% end %>
+                  <%= admin_tool(compact: true, roles: [ :fraud_dept ]) do %>
+                    <%= link_to "🔨", admin_project_path(@project), class: "project-show__admin-link", data: { turbo_frame: "_top" }, "aria-label": "View #{@project.title} in admin" %>
+                  <% end %>
                 </div>
                 <div class="project-show__byline">
                   <% if members.any? %>
@@ -419,7 +431,8 @@
                   <p class="project-show__authors">
                     By
                     <% members.each_with_index do |m, i| %>
-                      <%= " and " if i > 0 && i == members.length - 1 %><%= link_to "@#{m.display_name}", profile_path(m.display_name), class: "project-show__author", data: { turbo_frame: "_top", turbo_prefetch: "true" } %><%= render StreakBadgeComponent.new(user: m) %><%= " ⚡" if m.admin? %><%= "," if i < members.length - 2 && members.length > 2 %>
+                      <%= " and " if i > 0 && i == members.length - 1 %><%= render "shared/username_link", user: m, link_class: "project-show__author",
+                          data: { turbo_frame: "_top", turbo_prefetch: "true" } %><%= "," if i < members.length - 2 && members.length > 2 %>
                     <% end %>
                   </p>
                 </div>
@@ -464,9 +477,19 @@
                 <% end %>
 
                 <% if can_edit_project %>
-                  <%= link_to "Edit project", project_path(@project, editing: true),
-                              class: "project-show__pill project-show__pill--outline",
-                              data: { turbo_frame: "project_hero" } %>
+                  <% edit_project_link = capture do %>
+                    <%= link_to "Edit project", project_path(@project, editing: true),
+                                class: "project-show__pill project-show__pill--outline",
+                                data: { turbo_frame: "project_hero" } %>
+                  <% end %>
+
+                  <% if admin_editing_project %>
+                    <%= admin_tool do %>
+                      <%= edit_project_link %>
+                    <% end %>
+                  <% else %>
+                    <%= edit_project_link %>
+                  <% end %>
                 <% end %>
 
                 <% if current_user && !is_member %>

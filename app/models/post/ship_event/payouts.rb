@@ -441,10 +441,8 @@ module Post::ShipEvent::Payouts
     end
 
     def notify_vote_deficit
-      cache_key = "vote_deficit_notified:#{id}"
-      return if Rails.cache.exist?(cache_key)
+      return if Notifications::Payouts::VoteDeficitBlocked.exists?(recipient: payout_recipient, record: self)
 
-      Rails.cache.write(cache_key, true, expires_in: 6.hours)
       Notifications::Payouts::VoteDeficitBlocked.notify(
         recipient: payout_recipient,
         record: self,

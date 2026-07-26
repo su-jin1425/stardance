@@ -94,10 +94,8 @@
     <div class="feed-post-card__meta">
       <p class="feed-post-card__byline">
         <% if author %>
-          <%= link_to "@#{author.display_name}",
-                      profile_path(author.display_name),
-                      class: "feed-post-card__author",
-                      data: { turbo_frame: "_top", turbo_prefetch: "true" } %><%= render StreakBadgeComponent.new(user: author) %><%= " ⚡" if author.admin? %>
+          <%= render "shared/username_link", user: author, link_class: "feed-post-card__author",
+                      data: { turbo_frame: "_top", turbo_prefetch: "true" } %>
         <% end %>
         <span class="feed-post-card__context">on</span>
         <%= link_to project.title, project_path(project), class: "feed-post-card__project", data: { turbo_frame: "_top" } %>

@@ -84,6 +84,22 @@ class Project < ApplicationRecord
       })
       .distinct
   }
+  scope :needs_language_sync, -> {
+    where.not(repo_url: [ nil, "" ])
+      .left_joins(:project_language)
+      .where(
+        "project_languages.id IS NULL OR " \
+        "project_languages.status IN (?) OR " \
+        "(project_languages.status = ? AND project_languages.last_synced_at < ?)",
+        [ ProjectLanguage.statuses[:pending], ProjectLanguage.statuses[:failed] ],
+        ProjectLanguage.statuses[:synced],
+        1.day.ago
+      )
+      .order(
+        Arel.sql("CASE WHEN project_languages.id IS NULL THEN 0 ELSE 1 END"),
+        Arel.sql("project_languages.last_synced_at ASC NULLS FIRST")
+      )
+  }
   scope :with_banner_priority, -> {
     left_joins(:banner_attachment)
       .includes(banner_attachment: :blob)
@@ -111,6 +127,8 @@ class Project < ApplicationRecord
   has_many :skips, class_name: "Project::Skip", dependent: :destroy
   has_many :project_follows, dependent: :destroy
   has_many :followers, through: :project_follows, source: :user
+
+  has_one :project_language, dependent: :destroy
 
   has_many :mission_attachments,      class_name: "Project::MissionAttachment",  dependent: :destroy, inverse_of: :project
   has_many :missions,                 through:    :mission_attachments

@@ -904,6 +904,55 @@
     font-size: calc(var(--font-size-s) * 1.2);
   }
 
+  // Shown only inside the admin_tool box when a deleted devlog is surfaced
+  // to an admin/fraud_dept viewer (see Posts::CardComponent#deleted_devlog?).
+  &__deleted-notice {
+    margin: var(--space-xxs) 0 0;
+    padding-left: var(--feed-content-offset);
+    font-size: calc(var(--font-size-s) * 1.2);
+    color: var(--color-brand-orange);
+  }
+
+  // Admin-only, lazy-loaded Hackatime project breakdown (see
+  // Posts::CardComponent#hackatime_breakdown_url). Collapsed by default;
+  // the turbo-frame inside only fetches once the <details> is opened.
+  &__hackatime-summary {
+    cursor: pointer;
+    font-size: calc(var(--font-size-s) * 1.2);
+    color: var(--color-space-text-muted);
+
+    &:hover {
+      color: var(--color-space-text);
+    }
+  }
+
+  &__hackatime-list {
+    margin: var(--space-xxs) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__hackatime-item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-xxs);
+    font-size: calc(var(--font-size-s) * 1.1);
+  }
+
+  &__hackatime-name {
+    font-weight: 600;
+  }
+
+  &__hackatime-percent {
+    color: var(--color-brand-orange);
+  }
+
+  &__hackatime-seconds,
+  &__hackatime-loading,
+  &__hackatime-empty {
+    color: var(--color-space-text-muted);
+  }
+
   &__body {
     padding-left: var(--feed-content-offset);
     font-size: calc(var(--font-size-s) * 1.2);

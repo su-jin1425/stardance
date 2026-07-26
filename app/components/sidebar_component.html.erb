@@ -68,9 +68,13 @@
             <%= helpers.stardust_icon(extra_class: "sidebar__user-balance-icon") %>
             <span class="sidebar__user-balance-amount"><%= number_with_delimiter(user.cached_balance) %></span>
           </div>
-          <%= link_to profile_path(user.display_name), class: "sidebar__user-meta-handle", data: { turbo: true } do %>
-            @<%= user.display_name %>
-          <% end %>
+          <div class="sidebar__user-handle-row">
+            <%= link_to profile_path(user.display_name), class: "sidebar__user-meta-handle", data: { turbo: true } do %>
+              @<%= user.display_name %>
+            <% end %>
+            <%= helpers.admin_tool(compact: true) do %><%= link_to "🔨", helpers.admin_user_path(user), class: "username-link__admin", "aria-label": "View #{user.display_name} in admin" %><% end %>
+            <%= helpers.admin_tool(compact: true) do %>#<%= user.id %><% end %>
+          </div>
         </div>
 
         <div class="sidebar__user-actions">

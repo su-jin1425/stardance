@@ -30,10 +30,8 @@
     <div class="feed-post-card__meta">
       <p class="feed-post-card__byline">
         <% if reviewer_name %>
-          <%= link_to "@#{reviewer_name}",
-                      profile_path(reviewer_name),
-                      class: "feed-post-card__author",
-                      data: { turbo_frame: "_top" } %>
+          <%= render "shared/username_link", user: reviewer, link_class: "feed-post-card__author",
+                      data: { turbo_frame: "_top" }, badge: false %>
         <% else %>
           <span class="feed-post-card__author">Shipwrights</span>
         <% end %>

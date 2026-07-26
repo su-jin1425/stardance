@@ -84,13 +84,15 @@ module Certification
     FLAG_NEURALNET         = 1 << 2
     FLAG_NO_HACKATIME_USER = 1 << 3
     FLAG_CHECK_FAILED      = 1 << 4
+    FLAG_ENTROPY_ANOMALY   = 1 << 5
 
     FLAGS_BY_BIT = {
       FLAG_UNKNOWN_FILE      => :unknown_file,
       FLAG_CURSOR_STRANGE    => :cursor_strange,
       FLAG_NEURALNET         => :neuralnet,
       FLAG_NO_HACKATIME_USER => :no_hackatime_user,
-      FLAG_CHECK_FAILED      => :check_failed
+      FLAG_CHECK_FAILED      => :check_failed,
+      FLAG_ENTROPY_ANOMALY   => :entropy_anomaly
     }.freeze
 
     validates :decision_justification, length: { maximum: 10_000 }, allow_blank: true
@@ -118,6 +120,7 @@ module Certification
     def neuralnet? = flag?(FLAG_NEURALNET)
     def no_hackatime_user? = flag?(FLAG_NO_HACKATIME_USER)
     def check_failed? = flag?(FLAG_CHECK_FAILED)
+    def entropy_anomaly? = flag?(FLAG_ENTROPY_ANOMALY)
 
     def flag_names
       FLAGS_BY_BIT.filter_map { |bit, name| name if flag?(bit) }

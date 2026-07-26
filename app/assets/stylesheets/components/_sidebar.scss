@@ -325,10 +325,23 @@ button.sidebar__nav-link {
   overflow: hidden;
 }
 
+.sidebar__user-handle-row {
+  align-items: center;
+  display: flex;
+  gap: var(--space-xxs);
+  min-width: 0;
+
+  .tools-do--inline {
+    flex-shrink: 0;
+  }
+}
+
 .sidebar__user-meta-handle {
+  flex-shrink: 1;
   font-weight: 700;
   font-size: var(--font-size-m);
   color: inherit;
+  min-width: 0;
   text-decoration: none;
   overflow: hidden;
   text-overflow: ellipsis;

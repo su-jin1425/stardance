@@ -91,6 +91,13 @@ module GitHost
       tree["tree"].filter_map { |node| node["path"] if node["type"] == "blob" }
     end
 
+    def fetch_languages
+      return nil unless owner && repo
+
+      full_url = "#{api_base}/repos/#{owner}/#{repo}/languages"
+      http_get(full_url, headers: auth_headers)
+    end
+
     protected
 
     def parse_url!

@@ -342,9 +342,10 @@
     }
   }
 
-  &__admin-strip {
+  // Border/color come from the shared .admin.tools-do box (admin_tool helper);
+  // this only adds the card-specific layout and corner radius.
+  &__admin-strip.admin.tools-do {
     background: rgba(255, 176, 122, 0.05);
-    border: 2px dashed rgba(255, 176, 122, 0.4);
     border-radius: 0 0 12px 12px;
     display: flex;
     flex-direction: column;

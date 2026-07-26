@@ -34,6 +34,10 @@ module GitHost
       raise NotImplementedError
     end
 
+    def fetch_languages
+      nil
+    end
+
     def provider_name
       raise NotImplementedError
     end

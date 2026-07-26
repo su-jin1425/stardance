@@ -34,6 +34,13 @@ module Posts
       display_post&.postable_type == "Post::Devlog"
     end
 
+    # True when this card is only visible because the viewer has permission
+    # to see deleted devlogs (admin/fraud_dept, see ApplicationPolicy#view_deleted_devlogs?)
+    # — the devlog itself has been soft-deleted.
+    def deleted_devlog?
+      devlog? && display_postable.respond_to?(:deleted?) && display_postable.deleted?
+    end
+
     def repost?
       post.postable_type == "Post::Repost"
     end
@@ -248,6 +255,12 @@ module Posts
     def delete_url
       if devlog? && project.present?
         helpers.project_devlog_path(project, postable)
+      end
+    end
+
+    def hackatime_breakdown_url
+      if devlog? && project.present?
+        helpers.hackatime_breakdown_project_devlog_path(project, postable)
       end
     end
 

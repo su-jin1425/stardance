@@ -43,10 +43,27 @@ module ApplicationHelper
       data: { controller: "count-up", count_up_target_value: n })
   end
 
-  def admin_tool(&block)
-    if current_user&.admin?
-      content_tag(:div, class: "admin tools-do", &block)
-    end
+  # compact: true renders an inline <span> with no dashed box, for markers
+  # that sit inside a line of text (e.g. a username byline) rather than
+  # wrapping a standalone block of debug content.
+  #
+  # roles: lets specific call sites (e.g. the "view in admin" hammer link)
+  # opt additional roles into an otherwise admin-only marker, without
+  # loosening every other admin_tool usage (comment delete, super star
+  # controls, profile/project edit) to those roles too.
+  #
+  # Uses real_user rather than current_user while impersonating, so the
+  # admin retains their own debug tooling instead of losing it to whatever
+  # role the impersonated account happens to have.
+  def admin_tool(compact: false, extra_class: nil, roles: [], &block)
+    acting_user = impersonating? ? real_user : current_user
+    allowed = acting_user&.admin? || roles.any? { |role| acting_user&.has_role?(role) }
+    return unless allowed && Flipper.enabled?(:shigimi_eyes, acting_user)
+
+    classes = [ "admin", "tools-do" ]
+    classes << "tools-do--inline" if compact
+    classes << extra_class if extra_class.present?
+    content_tag(compact ? :span : :div, class: classes.join(" "), &block)
   end
 
   def sign(num)
@@ -138,9 +155,21 @@ module ApplicationHelper
 
   def certification_verdict_video_src(cert)
     return if cert.nil?
-    return url_for(cert.verdict_video) if cert.verdict_video.attached?
+    return cert.verdict_video.url(disposition: :inline) if cert.verdict_video.attached?
 
-    safe_external_url(cert.proof_video_url)
+    active_storage_redirect_url(safe_external_url(cert.proof_video_url))
+  end
+
+  def active_storage_redirect_url(url)
+    return if url.blank?
+
+    uri = URI.parse(url)
+    return url unless uri.path.start_with?("/rails/active_storage/blobs/proxy/")
+
+    uri.path = uri.path.sub("/rails/active_storage/blobs/proxy/", "/rails/active_storage/blobs/redirect/")
+    uri.to_s
+  rescue URI::InvalidURIError
+    url
   end
 
   def achievement_icon(icon_name, earned: true, **options)

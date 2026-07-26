@@ -56,9 +56,19 @@
           </button>
         <% end %>
 
-        <button class="btn-action btn-report" data-action="click->certification--ysws--fraud-report#open">
-          🚩 Report to Fraud Squad!
-        </button>
+        <div class="review-detail-header__review-actions">
+          <button class="btn-action btn-report" data-action="click->certification--ysws--fraud-report#open">
+            🚩 Report to Fraud Squad!
+          </button>
+
+          <% if @review.pending? && @review.claimed_by?(current_user) %>
+            <%= button_to "Unclaim review",
+                          admin_certification_ysws_claim_path(@review),
+                          method: :delete,
+                          class: "btn-secondary slim",
+                          form: { class: "review-detail-header__unclaim-form" } %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
@@ -153,13 +163,13 @@
       <section class="review-card boss-note-card">
         <h3>Note from da boss of YSWS - Alex (aka AVD)</h3>
         <div class="boss-note-content">
-          <div class="note-title">Reject if:</div>
+          <div class="note-title">Remember to include something specific in the justification and Reject if:</div>
           <ul>
             <li>low quality to the point it doesn't do what it says it does (shipwrights messed up - return to them)</li>
-            <li>Looks like ai, but is undeclared (check declaration on the ft project page)</li>
-            <li>Looks like over 30% ai - even if it is declared</li>
-            <li>Looks like it isn't shipped (shipwrights messed up)</li>
-            <li>last project edit was before the event launch</li>
+            <li>Looks like ai, but is undeclared</li>
+            <li>Looks like over 30% ai (don't reject just reduce by at least 75%)</li>
+            <li>Looks like it isn't shipped (shipwrights messed up - return to them)</li>
+            <li>last project edit was before the event launch (May 30th) </li>
             <li>project was worked on before event, and not marked as Project Update (return to shipwrights)</li>
           </ul>
         </div>
@@ -222,14 +232,16 @@
             </span>
           </div>
 
-          <% if @review.reviewer %>
-            <div class="detail-item">
-              <span class="detail-key">YSWS Reviewer:</span>
-              <span class="detail-value">
-                <%= link_to (@review.reviewer.display_name || "Unknown"), admin_user_path(@review.reviewer), class: "link-primary" %>
-              </span>
-            </div>
-          <% end %>
+          <div class="detail-item">
+            <span class="detail-key">Reviewed by:</span>
+            <span class="detail-value">
+              <% if @review.reviewer %>
+                <%= link_to (@review.reviewer.display_name.presence || "Unknown"), admin_user_path(@review.reviewer), class: "link-primary" %>
+              <% else %>
+                Not reviewed yet
+              <% end %>
+            </span>
+          </div>
 
           <% if @review.summary_justification.present? %>
             <div class="detail-item">
